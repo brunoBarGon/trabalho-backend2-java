@@ -49,7 +49,7 @@ public class BancoController {
 	}
 	
 	
-	
+	//FIXME O mapeamento correto seria @PutMapping("/{numero}")
 	@PutMapping("/numero")
 	public ResponseEntity<?> atualizar(@RequestBody Conta conta) throws ContaNotFoundException, ContaInvalidaException {
 
@@ -65,11 +65,22 @@ public class BancoController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
+	/**
+	 * FIXME O mapeamento correto seria:
+	 *			@PostMapping("/{numero}/{tipo}/{valor}")
+	 *			operacaoDebito(@PathParam Integer numero, @PathParam Tipo tipo, @PathParam double valor) 
+	 *
+	 *		ou
+	 *			@PostMapping("/{numero}/debito/{valor}")
+	 *			operacaoDebito(@PathParam Integer numero, @PathParam double valor) 
+	 */
+	
 	@PostMapping("/numero/debito")
 	public ResponseEntity<?> operacaoDebito(@RequestParam Integer numero, Tipo tipo, double valor) throws SaldoInsuficienteException, ContaNotFoundException, ContaInvalidaException{
 		return ResponseEntity.status(HttpStatus.CREATED).body(bancoService.operacaoDebito(numero, tipo, valor));
 	}
 	
+	//FIXME Mesmo ajuste solcitado em operacaoDebito
 	@PostMapping("/numero/credito")
 	public ResponseEntity<?> operacaoCredito(@RequestParam Integer numero, Tipo tipo, double valor) throws ContaNotFoundException, ContaInvalidaException{
 		return ResponseEntity.status(HttpStatus.CREATED).body(bancoService.operacaoCredito(numero, tipo, valor));

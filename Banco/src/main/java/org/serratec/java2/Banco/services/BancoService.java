@@ -94,6 +94,8 @@ public class BancoService {
 		operacao.setTipo(tipo);
 
 		if (operacao.getTipo() == tipo.DEBITO) {
+			//FIXME Aqui deveriam ser 2 exceptions diferentes: SaldoInsuficienteException e ValorOperacaoInvalidoException
+			//TODO O valor mínimo poderia ser configurado em application.properties
 			if (operacao.getValor() > conta.getSaldo() || operacao.getValor() < 50) {
 				throw new SaldoInsuficienteException();
 			} else {
