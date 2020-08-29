@@ -8,7 +8,6 @@ import org.serratec.java2.Banco.exceptions.SaldoInsuficienteException;
 import org.serratec.java2.Banco.exceptions.ValorOperacaoInvalidoException;
 import org.serratec.java2.Banco.services.BancoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +48,9 @@ public class BancoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(bancoService.incluir(novaConta));
 	}
 	
-	
-	
+
 	@PutMapping("/{numero}")
+
 	public ResponseEntity<?> atualizar(@RequestBody Conta conta) throws ContaNotFoundException, ContaInvalidaException {
 
 		Conta contaAtualizada = bancoService.atualizarPorNumero(conta);
@@ -66,11 +65,13 @@ public class BancoController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
+	
 	@PostMapping("/{numero}/debito/{valor}")
-	public ResponseEntity<?> operacaoDebito(@PathVariable Integer numero, @PathVariable double valor) throws ValorOperacaoInvalidoException, SaldoInsuficienteException, ContaNotFoundException, ContaInvalidaException{
+	public ResponseEntity<?> operacaoDebito(@PathVariable Integer numero, @PathVariable double valor) throws SaldoInsuficienteException, ContaNotFoundException, ContaInvalidaException, ValorOperacaoInvalidoException{
 		return ResponseEntity.status(HttpStatus.CREATED).body(bancoService.operacaoDebito(numero, valor));
 	}
 	
+
 	@PostMapping("/{numero}/credito/{valor}")
 	public ResponseEntity<?> operacaoCredito(@PathVariable Integer numero, @PathVariable double valor) throws ContaNotFoundException, ContaInvalidaException{
 		return ResponseEntity.status(HttpStatus.CREATED).body(bancoService.operacaoCredito(numero, valor));
