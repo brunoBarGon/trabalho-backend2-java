@@ -9,11 +9,15 @@ import org.serratec.java2.Banco.dominio.Tipo;
 import org.serratec.java2.Banco.exceptions.ContaInvalidaException;
 import org.serratec.java2.Banco.exceptions.ContaNotFoundException;
 import org.serratec.java2.Banco.exceptions.SaldoInsuficienteException;
+import org.serratec.java2.Banco.exceptions.ValorOperacaoInvalidoException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BancoService {
-
+	@Value("${valorMinimo}")
+	private double valorMinimo;
+	
 	private List<Conta> contas;
 	private int proximaConta = 0;
 
@@ -85,35 +89,33 @@ public class BancoService {
 
 	}
 
-	public Operacao operacaoDebito(Integer numero, Tipo tipo, double valor)
-			throws SaldoInsuficienteException, ContaNotFoundException, ContaInvalidaException {
+	public Operacao operacaoDebito(Integer numero, double valor)
+			throws ValorOperacaoInvalidoException, SaldoInsuficienteException, ContaNotFoundException, ContaInvalidaException {
 		Conta conta = recuperarPorNumero(numero);
 		Operacao operacao = new Operacao();
 		operacao.setConta(conta);
 		operacao.setValor(valor);
-		operacao.setTipo(tipo);
+		operacao.setTipo(Tipo.DEBITO);
 
-		if (operacao.getTipo() == tipo.DEBITO) {
-			if (operacao.getValor() > conta.getSaldo() || operacao.getValor() < 50) {
+			if (operacao.getValor() > conta.getSaldo()) {
 				throw new SaldoInsuficienteException();
+			} else if (operacao.getValor() < valorMinimo) {
+				throw new ValorOperacaoInvalidoException();
 			} else {
 				conta.setSaldo(conta.getSaldo() - operacao.getValor());
 			}
-		}
 		return operacao;
 	}
 	
-	public Operacao operacaoCredito(Integer numero, Tipo tipo, double valor)
+	public Operacao operacaoCredito(Integer numero, double valor)
 			throws ContaNotFoundException, ContaInvalidaException {
 		Conta conta = recuperarPorNumero(numero);
 		Operacao operacao = new Operacao();
 		operacao.setConta(conta);
 		operacao.setValor(valor);
-		operacao.setTipo(tipo);
+		operacao.setTipo(Tipo.CREDITO);
 	
-		 if (operacao.getTipo() == tipo.CREDITO){
-			conta.setSaldo(conta.getSaldo() + operacao.getValor());
-		}
+		conta.setSaldo(conta.getSaldo() + operacao.getValor());
 		return operacao;
 	}
 

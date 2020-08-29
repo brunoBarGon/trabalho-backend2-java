@@ -3,6 +3,7 @@ package org.serratec.java2.Banco.controllers;
 import org.serratec.java2.Banco.exceptions.ContaInvalidaException;
 import org.serratec.java2.Banco.exceptions.ContaNotFoundException;
 import org.serratec.java2.Banco.exceptions.SaldoInsuficienteException;
+import org.serratec.java2.Banco.exceptions.ValorOperacaoInvalidoException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,10 +35,19 @@ public class BancoExceptionController {
 
 	@ExceptionHandler(SaldoInsuficienteException.class)
 	public ResponseEntity<String> trataSaldoException(SaldoInsuficienteException exception){
-		String msg = String.format("Operação não realizada. Saldo insuficiente ou valor de saque foi menor do que 50", exception.getValor());
+		String msg = String.format("Operação não realizada. Saldo insuficiente.", exception.getValor());
 		return ResponseEntity.badRequest()
 				.header("x-erro-msg", msg)
-				.header("s-erro-code", "SALDO_INVALIDO")
+				.header("s-erro-code", "SALDO_INSUFICIENTE")
+				.build();
+	}
+	
+	@ExceptionHandler(ValorOperacaoInvalidoException.class)
+	public ResponseEntity<String> trataValorException(ValorOperacaoInvalidoException exception){
+		String msg = String.format("Operação não realizada. Saque foi menor do que 50 reais", exception.getValor());
+		return ResponseEntity.badRequest()
+				.header("x-erro-msg", msg)
+				.header("s-erro-code", "VALOR_INVALIDO")
 				.build();
 	}
 	
